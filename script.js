@@ -31,11 +31,11 @@ function generateCalender(){
 
 
 function showAddTaskModal(){
-    document.getElementById('add-task-modal').style.display = 'block';
+    document.getElementById('addTaskModal').style.display = 'block';
 }
 
 function closeAddTaskModal(){
-    document.getElementById('add-task-modal').style.display = 'none';
+    document.getElementById('addTaskModal').style.display = 'none';
 }
 
 function deleteTask(taskElement){
@@ -57,13 +57,14 @@ function addTask(){
 
     if( taskDesc && !isNaN(taskDate.getDate())){
         const calenderDays = document.getElementById('calender').children;
-        for( let i = 0; i < calenderDays; i++){
+
+        for( let i = 0; i < calenderDays.length; i++){
             const day = calenderDays[i];
             if(parseInt(day.textContent) === taskDate.getDate()){
                 const taskElement = document.createElement('div');
                 taskElement.className = "task";
                 taskElement.textContent = taskDesc;
-                
+                console.log(taskElement);
                 taskElement.addEventListener("contextmenu", function (event){
                     event.preventDefault();
                     deleteTask(taskElement);
@@ -76,8 +77,6 @@ function addTask(){
                 day.appendChild(taskElement);
                 break;
             }
-
-
         }
         closeAddTaskModal();
     }
