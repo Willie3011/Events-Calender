@@ -133,3 +133,28 @@ input[type = "text"]{
     cursor: pointer;
     transition: all 0.3s ease;
 }
+
+
+@media screen and (max-width: 1200px) {
+    .calender-grid{
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .calender-grid{
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .calender-grid{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .calender-grid{
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
