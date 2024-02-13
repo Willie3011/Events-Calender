@@ -7,7 +7,24 @@
     <title>Events Clender App</title>
 </head>
 <body>
-    
+    <div class="planner">
+        <h1>Event Planner</h1>
+        <div class="calender-grid" id="calender">
+
+        </div>
+    </div>
+
+    <button class="add-task-btn" onclick="showAddTaskModal()">Add Task</button>
+
+    <div id="addTaskModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddTaskModal()">&times;</span>
+            <h2>Add Task</h2>
+            <input type="date" id="task-date">
+            <input type="text" id="task-desc" placeholder="Task Decription">
+            <button onclick="addTask()">Add Task</button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
