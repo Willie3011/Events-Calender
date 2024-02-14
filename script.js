@@ -55,11 +55,10 @@ function editTask(taskElement, taskIndex, dayIndex) {
   //Get the new Text Content
   const newTaskDesc = prompt("Edit your task:", taskElement.textContent);
 
-  
   if (newTaskDesc !== null && newTaskDesc.trim() !== "") {
     //Change the old task content
     task.content = newTaskDesc;
-
+    //Update the Array
     Events[dayIndex][taskIndex] = task;
     saveEvents(Events);
     taskElement.textContent = newTaskDesc;
@@ -89,7 +88,7 @@ function addEvent() {
     }
     closeAddTaskModal();
     saveEvents(events);
-    renderEvent();
+    window.location = "index.html";
   } else {
     alert("Please enter a valid date and task description!");
   }
@@ -98,18 +97,23 @@ function addEvent() {
 function renderEvent() {
   //Get Events
   const eventsList = getEvents();
-  let dayEvent = [];
 
-  //Save Day Events in an Array
+  //Loop through each Day with events
   Object.keys(eventsList).forEach((event, index) => {
+    //Loop Through each event
     for (let i = 0; i < eventsList[event].length; i++) {
-        
       const taskDate = new Date(eventsList[event][i].creationDate);
       const taskDesc = eventsList[event][i].content;
+
+      // check if event is not null
       if (taskDesc && !isNaN(taskDate.getDate())) {
         const calenderDays = document.getElementById("calender").children;
+
+        //loop through calender days and append tasks at appropriate days
         for (let j = 0; j < calenderDays.length; j++) {
           const day = calenderDays[j];
+
+          //check if date on task is equal to calender date
           if (parseInt(day.textContent) === taskDate.getDate()) {
             const taskElement = document.createElement("div");
             taskElement.className = "task";
@@ -124,8 +128,12 @@ function renderEvent() {
               editTask(taskElement, i, event);
             });
 
-            day.appendChild(taskElement);
-            break;
+            if (day.textContent === taskElement.textContent) {
+              console.log(day.innerHTML);
+              break;
+            } else {
+              day.appendChild(taskElement);
+            }
           }
         }
       }
