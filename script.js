@@ -45,66 +45,43 @@ function deleteTask(taskElement) {
 }
 
 function editTask(taskElement) {
+    const Events = getEvents();
   const newTaskDesc = prompt("Edit your task:", taskElement.textContent);
   if (newTaskDesc !== null && newTaskDesc.trim() !== "") {
     taskElement.textContent = newTaskDesc;
   }
 }
 
-function addTask() {
-  const taskDate = new Date(document.getElementById("task-date").value);
-  const taskDesc = document.getElementById("task-desc").value.trim();
 
-  if (taskDesc && !isNaN(taskDate.getDate())) {
-    const calenderDays = document.getElementById("calender").children;
-
-    for (let i = 0; i < calenderDays.length; i++) {
-      const day = calenderDays[i];
-      if (parseInt(day.textContent) === taskDate.getDate()) {
-        const taskElement = document.createElement("div");
-        taskElement.className = "task";
-        taskElement.textContent = taskDesc;
-        console.log(taskElement);
-        taskElement.addEventListener("contextmenu", function (event) {
-          event.preventDefault();
-          deleteTask(taskElement);
-        });
-
-        taskElement.addEventListener("click", function () {
-          editTask(taskElement);
-        });
-
-        day.appendChild(taskElement);
-        break;
-      }
+function addEvent() {
+    let events = getEvents();
+    const taskDate = new Date(document.getElementById("task-date").value);
+    const taskDesc = document.getElementById("task-desc").value.trim();
+    
+    if (taskDesc && !isNaN(taskDate.getDate())) {
+        if (!events[taskDate.getDay()]) {
+            events[taskDate.getDay()] = [
+                {
+                    heading: taskDate.getDay(),
+                    content: taskDesc,
+                    creationDate: taskDate,
+                },
+            ];
+        } else {
+            events[taskDate.getDay()].push({
+                heading: taskDate.getDay(),
+                content: taskDesc,
+                creationDate: taskDate,
+            });
+        }
+        closeAddTaskModal();
+        saveEvents(events);
+        renderEvent();
     }
-    addEvent(taskDate.getDay(), taskDate, taskDesc);
-    closeAddTaskModal();
-  } else {
-    alert("Please enter a valid date and task description!");
-  }
-}
+    else {
+        alert("Please enter a valid date and task description!");
+    }
 
-function addEvent(heading, date, task) {
-  let events = getEvents();
-
-  if (!events[heading]) {
-    events[heading] = [
-      {
-        heading: heading,
-        content: task,
-        creationDate: date,
-      },
-    ];
-  } else {
-    events[heading].push({
-      heading: heading,
-      content: task,
-      creationDate: date,
-    });
-  }
-
-  saveEvents(events);
 }
 
 function renderEvent() {
