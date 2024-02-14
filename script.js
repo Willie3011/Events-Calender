@@ -44,77 +44,84 @@ function deleteTask(taskElement) {
   }
 }
 
-function editTask(taskElement) {
-    const Events = getEvents();
+function editTask(taskElement, taskIndex, dayIndex) {
+  //Get All Events
+  const Events = getEvents();
+
+  //Get the task being edited
+  let task = Events[dayIndex][taskIndex];
+  console.log(taskIndex);
+
+  //Get the new Text Content
   const newTaskDesc = prompt("Edit your task:", taskElement.textContent);
+
+  
   if (newTaskDesc !== null && newTaskDesc.trim() !== "") {
+    //Change the old task content
+    task.content = newTaskDesc;
+
+    Events[dayIndex][taskIndex] = task;
+    saveEvents(Events);
     taskElement.textContent = newTaskDesc;
   }
 }
 
-
 function addEvent() {
-    let events = getEvents();
-    const taskDate = new Date(document.getElementById("task-date").value);
-    const taskDesc = document.getElementById("task-desc").value.trim();
-    
-    if (taskDesc && !isNaN(taskDate.getDate())) {
-        if (!events[taskDate.getDay()]) {
-            events[taskDate.getDay()] = [
-                {
-                    heading: taskDate.getDay(),
-                    content: taskDesc,
-                    creationDate: taskDate,
-                },
-            ];
-        } else {
-            events[taskDate.getDay()].push({
-                heading: taskDate.getDay(),
-                content: taskDesc,
-                creationDate: taskDate,
-            });
-        }
-        closeAddTaskModal();
-        saveEvents(events);
-        renderEvent();
+  let events = getEvents();
+  const taskDate = new Date(document.getElementById("task-date").value);
+  const taskDesc = document.getElementById("task-desc").value.trim();
+  console.log(taskDate.getDate());
+  if (taskDesc && !isNaN(taskDate.getDate())) {
+    if (!events[taskDate.getDate()]) {
+      events[taskDate.getDate()] = [
+        {
+          heading: taskDate.getDate(),
+          content: taskDesc,
+          creationDate: taskDate,
+        },
+      ];
+    } else {
+      events[taskDate.getDate()].push({
+        heading: taskDate.getDate(),
+        content: taskDesc,
+        creationDate: taskDate,
+      });
     }
-    else {
-        alert("Please enter a valid date and task description!");
-    }
-
+    closeAddTaskModal();
+    saveEvents(events);
+    renderEvent();
+  } else {
+    alert("Please enter a valid date and task description!");
+  }
 }
 
 function renderEvent() {
-    //Get Events 
+  //Get Events
   const eventsList = getEvents();
   let dayEvent = [];
 
   //Save Day Events in an Array
   Object.keys(eventsList).forEach((event, index) => {
-    dayEvent.push(eventsList[event]);
-  });
-  for (let i = 0; i < dayEvent.length; i++) {
-    for (j = 0; j < dayEvent[i].length; j++) {
-      const taskDate = new Date(dayEvent[i][j].creationDate);
-      const taskDesc = dayEvent[i][j].content;
-
+    for (let i = 0; i < eventsList[event].length; i++) {
+        
+      const taskDate = new Date(eventsList[event][i].creationDate);
+      const taskDesc = eventsList[event][i].content;
       if (taskDesc && !isNaN(taskDate.getDate())) {
         const calenderDays = document.getElementById("calender").children;
-
-        for (let i = 0; i < calenderDays.length; i++) {
-          const day = calenderDays[i];
+        for (let j = 0; j < calenderDays.length; j++) {
+          const day = calenderDays[j];
           if (parseInt(day.textContent) === taskDate.getDate()) {
             const taskElement = document.createElement("div");
             taskElement.className = "task";
             taskElement.textContent = taskDesc;
-            console.log(taskElement);
+            taskElement.dataset.index = index;
             taskElement.addEventListener("contextmenu", function (event) {
               event.preventDefault();
-              deleteTask(taskElement);
+              deleteTask(taskElement, i, event);
             });
 
             taskElement.addEventListener("click", function () {
-              editTask(taskElement);
+              editTask(taskElement, i, event);
             });
 
             day.appendChild(taskElement);
@@ -123,7 +130,7 @@ function renderEvent() {
         }
       }
     }
-  }
+  });
 }
 
 function saveEvents(events) {
