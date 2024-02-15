@@ -37,10 +37,27 @@ function closeAddTaskModal() {
   document.getElementById("addTaskModal").style.display = "none";
 }
 
-function deleteTask(taskElement) {
+function deleteTask(taskElement, taskIndex, dayIndex) {
   if (confirm("Are you sure you want to delete this task?")) {
-    console.log(taskElement);
-    taskElement.parentNode.removeChild(taskElement);
+    //Get All Events
+  const Events = getEvents();
+  const h = [];
+  
+  //Check if task is there
+  if(Events[dayIndex][taskIndex]){
+      //delete task from array
+      Events[dayIndex].splice(taskIndex, 1);
+      taskElement.parentNode.removeChild(taskElement);
+      console.log(Events[dayIndex].toString());
+      if (Events[dayIndex].toString() == ""){
+        delete Events[dayIndex];
+      }
+      saveEvents(Events);
+      window.location = 'index.html';
+  }
+  else{
+    alert("Task Not Found!")
+  }
   }
 }
 
@@ -69,7 +86,6 @@ function addEvent() {
   let events = getEvents();
   const taskDate = new Date(document.getElementById("task-date").value);
   const taskDesc = document.getElementById("task-desc").value.trim();
-  console.log(taskDate.getDate());
   if (taskDesc && !isNaN(taskDate.getDate())) {
     if (!events[taskDate.getDate()]) {
       events[taskDate.getDate()] = [
@@ -99,11 +115,11 @@ function renderEvent() {
   const eventsList = getEvents();
 
   //Loop through each Day with events
-  Object.keys(eventsList).forEach((event, index) => {
+  Object.keys(eventsList).forEach((Event, index) => {
     //Loop Through each event
-    for (let i = 0; i < eventsList[event].length; i++) {
-      const taskDate = new Date(eventsList[event][i].creationDate);
-      const taskDesc = eventsList[event][i].content;
+    for (let i = 0; i < eventsList[Event].length; i++) {
+      const taskDate = new Date(eventsList[Event][i].creationDate);
+      const taskDesc = eventsList[Event][i].content;
 
       // check if event is not null
       if (taskDesc && !isNaN(taskDate.getDate())) {
@@ -121,15 +137,15 @@ function renderEvent() {
             taskElement.dataset.index = index;
             taskElement.addEventListener("contextmenu", function (event) {
               event.preventDefault();
-              deleteTask(taskElement, i, event);
+              deleteTask(taskElement, i, Event);
+
             });
 
             taskElement.addEventListener("click", function () {
-              editTask(taskElement, i, event);
+              editTask(taskElement, i, Event);
             });
 
             if (day.textContent === taskElement.textContent) {
-              console.log(day.innerHTML);
               break;
             } else {
               day.appendChild(taskElement);
